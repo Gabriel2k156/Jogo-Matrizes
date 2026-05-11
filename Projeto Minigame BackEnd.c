@@ -1,10 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void renderizarMapa(char *m[10][10]){
+    for(int i = 0; i < 10; i++){
+        for(int j = 0; j < 10; j++){
+            if (m[i][j] != NULL){ // Se o conteúdo da matriz não estiver vazio, printe o conteúdo dela 
+            printf("%s\t", m[i][j]);
+            }
+            else{ // Caso esteja vazio, printe "."
+                printf(".\t");
+            }
+        }
+    printf("\n");
+    }
+}
+
+typedef struct{
+    int vida;
+    int posicaox;
+    int posicaoy;
+}Player;
+
 int main() {
    char *mapa[10][10] = {{NULL}}; // Essencial setar o ponteiro como null antes de utilizar
    int i, j, menu;
-   
+   Player jogador;
    
    mapa[0][0] = "👮";
    mapa[1][1] = "█";
@@ -22,17 +42,15 @@ switch(menu){
     
     case 1:
     printf("\n");
-   for(i = 0; i < 10; i++){
-        for(j = 0; j < 10; j++){
-            if (mapa[i][j] != NULL){ // Se o conteúdo da matriz não estiver vazio, printe o conteúdo dela 
-            printf("%s\t", mapa[i][j]);
-            }
-            else{ // Caso esteja vazio, printe "."
-                printf(".\t");
-            }
-        }
+   renderizarMapa(mapa);
     printf("\n");
-    }
+    printf("Player sendo alterado... (TESTE)\n");
+    
+    mapa[2][2] = NULL; // Posição anterior fica vazia
+    mapa[2][3] = "🏃"; // Nova posição atualizada com o personagem
+    
+    renderizarMapa(mapa);
+    
     break;
 }// Fim do case aqui
     return 0;
