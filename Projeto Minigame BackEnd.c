@@ -15,7 +15,11 @@ void renderizarMapa(char *m[10][10]){
     }
 }
 
-typedef struct{
+/*void cima(struct *c){
+Estruturar mudança da posição do player com alteração do struct por referência
+}*/
+
+typedef struct{ // Struct com informações do jogador
     int vida;
     int posicaox;
     int posicaoy;
@@ -24,11 +28,16 @@ typedef struct{
 int main() {
    char *mapa[10][10] = {{NULL}}; // Essencial setar o ponteiro como null antes de utilizar
    int i, j, menu;
-   Player jogador;
+   char direcao;
+   
+   Player p;
+   
+   p.posicaox = 0;
+   p. posicaoy = 0;
    
    mapa[0][0] = "👮";
    mapa[1][1] = "█";
-   mapa[2][2] = "🏃";
+   mapa[p.posicaox][p.posicaoy] = "🏃";
    mapa[3][3] = "💰";
 
 printf("——— Policia e Ladrão ———\nDigite 1 para jogar ou 0 para sair\n");
@@ -42,16 +51,12 @@ switch(menu){
     
     case 1:
     printf("\n");
+    printf("Para onde ir? Digite 'w a s d' e digite ENTER\n");
+    scanf(" %c", &direcao); // Teste
+    
    renderizarMapa(mapa);
-    printf("\n");
-    printf("Player sendo alterado... (TESTE)\n");
+
     
-    mapa[2][2] = NULL; // Posição anterior fica vazia
-    mapa[2][3] = "🏃"; // Nova posição atualizada com o personagem
-    
-    renderizarMapa(mapa);
-    
-    break;
 }// Fim do case aqui
     return 0;
 }
