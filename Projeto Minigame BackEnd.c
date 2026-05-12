@@ -42,20 +42,40 @@ void renderizarMapa(char m[10][10], struct Player *p){ // Struct sendo passado c
     }
 }
 
-void MoverParaCima(Player *c){ // Diminui o valor x da matriz em 1, fazendo com que o player vá para cima
+void MoverParaCima(Player *c, char m[10][10]){
+  if(m[c->posicaox - 1][c->posicaoy] != PAREDE){
     c->posicaox--;
+  }
+    else{
+    printf("Bateu na parede, movimento invalido!\n");
+    }
 }
 
-void MoverParaBaixo(Player *c){
+void MoverParaBaixo(Player *c,char m[10][10]){
+    if(m[c->posicaox + 1][c->posicaoy] != PAREDE){
     c->posicaox++;
+    }
+    else{
+        printf("Bateu na parede, movimento invalido!\n");
+    }
 }
 
-void MoverParaEsquerda(Player *c){
-    c->posicaoy--;
+void MoverParaEsquerda(Player *c, char m[10][10]){
+     if(m[c->posicaox][c->posicaoy - 1] != PAREDE){
+        c->posicaoy--;
+     }
+    else{    
+        printf("Bateu na parede, movimento invalido!\n");
+    }
 }
 
-void MoverParaDireita(Player *c){
+void MoverParaDireita(Player *c, char m[10][10]){
+    if(m[c->posicaox][c->posicaoy + 1] != PAREDE){
     c->posicaoy++;
+    }
+    else{    
+        printf("Bateu na parede, movimento invalido!\n");
+    }
 }
 
 int main() {
@@ -99,44 +119,25 @@ switch(menu){
             printf("\n");
             renderizarMapa(mapa, &p);
     
-         printf("Para onde ir? Digite 'w a s d' e digite ENTER\n");
+            printf("Para onde ir? Digite 'w a s d' e digite ENTER\n");
             scanf(" %c", &direcao);
     
             if(direcao == 'w'){
-                if(mapa[p.posicaox - 1][p.posicaoy] != PAREDE){ // Verifica se o local que o player quer ir é uma parede
-                    MoverParaCima(&p);
+                MoverParaCima(&p, mapa);
                 }
-                else{
-                    printf("Bateu na parede, movimento invalido!\n");
-                }
-            }           
-            
+               
             if(direcao == 's'){
-                if(mapa[p.posicaox + 1][p.posicaoy] != PAREDE){
-                    MoverParaBaixo(&p);
-                }
-                else{
-                    printf("Bateu na parede, movimento invalido!\n");
-                }
+                MoverParaBaixo(&p, mapa);
             }
             
             if(direcao == 'a'){
-                if(mapa[p.posicaox][p.posicaoy - 1] != PAREDE){
-                    MoverParaEsquerda(&p);
-                }
-                else{
-                    printf("Bateu na parede, movimento invalido!\n");
-                }
+               MoverParaEsquerda(&p, mapa);
             }
             
             if(direcao == 'd'){
-                if(mapa[p.posicaox][p.posicaoy + 1] != PAREDE){
-                    MoverParaDireita(&p);
-                }
-                else{
-                    printf("Bateu na parede, movimento invalido!\n");
-                }
+               MoverParaDireita(&p, mapa);
             }
+            
     
             printf("\nNova posicao X do player = %d\n", p.posicaox);
             printf("Nova posicao Y do player = %d\n", p.posicaoy);
