@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define PAREDE '1'
-#define MOEDA '$'
+#define PAREDE '1' // Definição de constantes para fácil utilização e leitura do código
 #define POLICIAL '2'
+#define MOEDA '$'
 #define VAZIO '.'
 
 typedef struct Player{ // Struct com nome Player (para ser lido corretamente pela função RenderizarMapa)
@@ -21,13 +21,13 @@ void renderizarMapa(char m[10][10], struct Player *p){ // Struct sendo passado c
             if(i == p->posicaox && j == p->posicaoy){ // Se i e j forem iguais a posição do jogador, imprima 🏃
             printf("🏃\t");
         }
-            if(m[i][j] == MOEDA){
+            else if(m[i][j] == MOEDA){ // Caso encontre um "$" no código, substitui pelo emoji
                 printf("💰\t");
             }
-            else if(m[i][j] == POLICIAL){
+            else if(m[i][j] == POLICIAL){  // Caso encontre um "2" no código, substitui pelo emoji
                 printf("👮\t");
             }
-            else if(m[i][j] == PAREDE){
+            else if(m[i][j] == PAREDE){  // Caso encontre um "1" no código, substitui pelo emoji
                 printf("█\t");
             }
             else if (m[i][j] == VAZIO){
@@ -42,7 +42,7 @@ void renderizarMapa(char m[10][10], struct Player *p){ // Struct sendo passado c
     }
 }
 
-void MoverParaCima(Player *c){
+void MoverParaCima(Player *c){ // Diminui o valor x da matriz em 1, fazendo com que o player vá para cima
     c->posicaox--;
 }
 
@@ -64,8 +64,8 @@ int main() {
    int escolha = 1;
    char direcao;
    
-   for(i; i < 10; i++){ // Inicializa a matriz, removendo o lixo de memória
-       for(j; j < 10; j++){
+   for(i = 0; i < 10; i++){ // Inicializa a matriz, removendo o lixo de memória e o substituindo por "."
+       for(j = 0; j < 10; j++){
            mapa[i][j] = VAZIO;
        }
    }
@@ -103,7 +103,7 @@ switch(menu){
             scanf(" %c", &direcao);
     
             if(direcao == 'w'){
-                if(mapa[p.posicaox - 1][p.posicaoy] != PAREDE){
+                if(mapa[p.posicaox - 1][p.posicaoy] != PAREDE){ // Verifica se o local que o player quer ir é uma parede
                     MoverParaCima(&p);
                 }
                 else{
@@ -139,7 +139,7 @@ switch(menu){
             }
     
             printf("\nNova posicao X do player = %d\n", p.posicaox);
-            printf("Nova posicao X do player = %d\n", p.posicaoy);
+            printf("Nova posicao Y do player = %d\n", p.posicaoy);
         }
     
 }// Fim do case aqui
