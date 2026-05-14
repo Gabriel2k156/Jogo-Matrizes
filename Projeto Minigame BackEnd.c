@@ -116,6 +116,7 @@ int main() {
 	}
 
 
+
 	/*👮█💰🏃*/
 
 
@@ -133,30 +134,38 @@ int main() {
 			printf("\n");
 			renderizarMapa(mapa, &p);
 
-			printf("Para onde ir? Digite 'w a s d' e digite ENTER\n");
+			printf("Para onde ir? Digite 'w a s d' e digite ENTER - Digite 0 para SAIR\n");
 			scanf(" %c", &direcao);
 
-			if(direcao == 'w') {
+			if(direcao == 'w' || direcao == 'W') {
 				MoverParaCima(&p, mapa);
 			}
 
-			if(direcao == 's') {
+			if(direcao == 's' || direcao == 'S') {
 				MoverParaBaixo(&p, mapa);
 			}
 
-			if(direcao == 'a') {
+			if(direcao == 'a' || direcao == 'A') {
 				MoverParaEsquerda(&p, mapa);
 			}
 
-			if(direcao == 'd') {
+			if(direcao == 'd'|| direcao == 'D') {
 				MoverParaDireita(&p, mapa);
 			}
-
+        
+            if(direcao == '0'){
+                printf("Saindo...\n");
+                free(mapa);
+                return 0;
+            }
 
 			printf("\nNova posicao X do player = %d\n", p.posicaox);
 			printf("Nova posicao Y do player = %d\n", p.posicaoy);
 		}
-		free(mapa);
+	default: // Caso seja digitado algo além de 1 ou 0 no menu, retorne erro
+	    printf("Erro: Digite um valor válido!\n");
+	    return 1;
+		
 	}// Fim do case aqui
 	return 0;
 }
