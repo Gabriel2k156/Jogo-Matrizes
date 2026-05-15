@@ -10,12 +10,14 @@ int  altura, largura; // Variáveis de altura e largura do mapa, declaradas de f
 
 typedef struct Player { // Struct com nome Player (para ser lido corretamente pela função RenderizarMapa)
 	int vida;
-	int pontuacao;
+	int pontuacao; // Pontuação: É aumentada com a coleta de moedas
 	int posicaox;
 	int posicaoy;
-	int posicaoxtemp;
-	int posicaoytemp;
 } Player; // Alias da struct, para ser lido corretamente pelas demais funções
+
+void pontuacao(struct Player *p) { // Funcao para exibir a pontuacao atual do jogador durante a partida
+	printf("Pontuação: %d\n", p->pontuacao);
+}
 
 void renderizarMapa(char *m, struct Player *p) { // Struct sendo passado como parâmetro para ser lido pelo laço for
 	for(int i = 0; i < altura; i++) {
@@ -45,38 +47,47 @@ void renderizarMapa(char *m, struct Player *p) { // Struct sendo passado como pa
 }
 
 void MoverParaCima(Player *c, char *m) {
-	if(m[(c->posicaox - 1) * largura + c->posicaoy] != PAREDE) {
+	if(m[(c->posicaox - 1) * largura + c->posicaoy] != PAREDE && m[(c->posicaox - 1) * largura + c->posicaoy] != POLICIAL) { // Caso o novo movimento não seja no mesmo local de uma parede ou policial, mova o jogador
 		c->posicaox--;
 	}
-	else {
-		printf("Bateu na parede, movimento invalido!\n");
+	else if (m[(c->posicaox - 1) * largura + c->posicaoy] == POLICIAL) { // Caso o novo movimento seja no mesmo local do policial, o jogo é encerrado
+		printf("———G A M E  O V E R ———\nVocê foi pego! Reinicie o programa para tentar novamente\n");
+		free(m); // Libera a memória alocada
+		exit(0); // Encerra o programa
 	}
 }
 
 void MoverParaBaixo(Player *c,char *m) {
-	if(m[(c->posicaox + 1) * largura + c->posicaoy] != PAREDE) {
+	if(m[(c->posicaox + 1) * largura + c->posicaoy] != PAREDE && m[(c->posicaox + 1) * largura + c->posicaoy] != POLICIAL) {
 		c->posicaox++;
 	}
-	else {
-		printf("Bateu na parede, movimento invalido!\n");
+	else if (m[(c->posicaox + 1) * largura + c->posicaoy] == POLICIAL) {
+		printf("———G A M E  O V E R ———\nVocê foi pego! Reinicie o programa para tentar novamente\n");
+		free(m);
+		exit(0);
 	}
 }
 
 void MoverParaEsquerda(Player *c, char *m) {
-	if(m[(c->posicaox) * largura + c->posicaoy - 1] != PAREDE) {
+	if(m[c->posicaox * largura + (c->posicaoy - 1)] != PAREDE && m[c->posicaox * largura + (c->posicaoy - 1)] != POLICIAL) {
 		c->posicaoy--;
 	}
-	else {
-		printf("Bateu na parede, movimento invalido!\n");
+
+	else if (m[c->posicaox * largura + (c->posicaoy - 1)] == POLICIAL) {
+		printf("———G A M E  O V E R ———\nVocê foi pego! Reinicie o programa para tentar novamente\n");
+		free(m);
+		exit(0);
 	}
 }
 
 void MoverParaDireita(Player *c, char *m) {
-	if(m[(c->posicaox) * largura + c->posicaoy + 1] != PAREDE) {
+	if(m[(c->posicaox) * largura + c->posicaoy + 1] != PAREDE && m[(c->posicaox) * largura + c->posicaoy + 1] != POLICIAL) {
 		c->posicaoy++;
 	}
-	else {
-		printf("Bateu na parede, movimento invalido!\n");
+	else if (m[(c->posicaox) * largura + c->posicaoy + 1] == POLICIAL) {
+		printf("———G A M E  O V E R ———\nVocê foi pego! Reinicie o programa para tentar novamente\n");
+		free(m);
+		exit(0);
 	}
 }
 
@@ -87,10 +98,11 @@ int main() {
 	char direcao;
 	FILE *nivel;
 
-	//JOGADOR
+	//JOGADOR;
 	Player p;
 	p.posicaox = 4; // Posição vertical do jogador
 	p.posicaoy = 3; // Posição horizontal do jogador
+	p.pontuacao = 0; // Inicializa a pontuação para evitar uma variável com lixo de memória
 
 
 	nivel = fopen("nivel1.txt", "r"); // Abre o arquivo com o mapa
@@ -114,9 +126,7 @@ int main() {
 			}
 		}
 	}
-
-
-
+	fclose(nivel);
 	/*👮█💰🏃*/
 
 
@@ -127,11 +137,14 @@ int main() {
 
 	case 0:
 		printf("Saindo...\n");
-		break;
+		free(nivel); // Libera a memoria alocada, evitando um vazamento de memoria
+		return 0; // Encerra o programa
 
 	case 1:
 		while (escolha == 1) {
+			system("clear"); // Limpa o terminal
 			printf("\n");
+			pontuacao(&p);
 			renderizarMapa(mapa, &p);
 
 			printf("Para onde ir? Digite 'w a s d' e digite ENTER - Digite 0 para SAIR\n");
@@ -141,31 +154,32 @@ int main() {
 				MoverParaCima(&p, mapa);
 			}
 
-			if(direcao == 's' || direcao == 'S') {
+			else if(direcao == 's' || direcao == 'S') {
 				MoverParaBaixo(&p, mapa);
 			}
 
-			if(direcao == 'a' || direcao == 'A') {
+			else if(direcao == 'a' || direcao == 'A') {
 				MoverParaEsquerda(&p, mapa);
 			}
 
-			if(direcao == 'd'|| direcao == 'D') {
+			else if(direcao == 'd'|| direcao == 'D') {
 				MoverParaDireita(&p, mapa);
 			}
-        
-            if(direcao == '0'){
-                printf("Saindo...\n");
-                free(mapa);
-                return 0;
-            }
 
-			printf("\nNova posicao X do player = %d\n", p.posicaox);
-			printf("Nova posicao Y do player = %d\n", p.posicaoy);
+			else if(direcao == '0') {
+				printf("Saindo...\n");
+				free(mapa);
+				return 0;
+			}
+
+
 		}
 	default: // Caso seja digitado algo além de 1 ou 0 no menu, retorne erro
-	    printf("Erro: Digite um valor válido!\n");
-	    return 1;
-		
+		printf("Erro: Digite um valor válido!\n");
+		free(mapa); // Libera a memória alocada
+		return 1; // Encerra o programa com um erro
+
 	}// Fim do case aqui
+
 	return 0;
 }
