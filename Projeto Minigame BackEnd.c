@@ -122,11 +122,12 @@ int main() {
 		for(j = 0; j < largura; j++) {
 			if(fscanf(nivel, " %c", &mapa[(i * largura + j)]) != 1) { // Caso a leitura do arquivo não retorne um caractere válido (True) imprima um texto de erro
 				printf("Erro na leitura do mapa!");
-				break;
+				free(mapa);
+				return 1;
 			}
 		}
 	}
-	fclose(nivel);
+	fclose(nivel); // Fecha o arquivo após a leitura
 	/*👮█💰🏃*/
 
 
@@ -137,11 +138,11 @@ int main() {
 
 	case 0:
 		printf("Saindo...\n");
-		free(nivel); // Libera a memoria alocada, evitando um vazamento de memoria
+		free(mapa); // Libera a memoria alocada, evitando um vazamento de memoria
 		return 0; // Encerra o programa
 
 	case 1:
-		while (escolha == 1) {
+		while (1) {
 			system("clear"); // Limpa o terminal
 			printf("\n");
 			pontuacao(&p);
