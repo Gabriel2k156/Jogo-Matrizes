@@ -126,7 +126,7 @@ int main() {
 		return 1; // Retorna um erro caso não seja possível abrir o arquivo
 	}
 
-	fscanf(nivel, " %d %d", &largura, &altura); // Lê os primeiros dois números do arquivo e os considera como tamanho da altura e da largura, alocando cada valor nas variáveis  altura e largura, respectivamente
+	fscanf(nivel, " %d %d", &altura, &largura); // Lê os primeiros dois números do arquivo e os considera como tamanho da altura e da largura, alocando cada valor nas variáveis  altura e largura, respectivamente
 
 
 	mapa = (char*)malloc(largura * altura * sizeof(char)); // Aloca memória o suficiente no ponteiro mapa, de acordo com os valores de altura e largura
