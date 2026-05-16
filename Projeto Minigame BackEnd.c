@@ -15,7 +15,7 @@ typedef struct Player { // Struct com nome Player (para ser lido corretamente pe
 	int posicaoy;
 } Player; // Alias da struct, para ser lido corretamente pelas demais funções
 
-void pontuacao(struct Player *p) { // Funcao para exibir a pontuacao atual do jogador durante a partida. Adicionado acima das outras funções para que possa ser lido por elas
+void pontuacao(Player *p) { // Funcao para exibir a pontuacao atual do jogador durante a partida. Adicionado acima das outras funções para que possa ser lido por elas
 	printf("Pontuacao: %d\n", p->pontuacao); // Acessa o valor de pontuação da struct por referência
 }
 
@@ -34,7 +34,7 @@ void verificarLocal(Player *c, char *m) {
 
 
 
-void renderizarMapa(char *m, struct Player *p) { // Struct sendo passado como parâmetro para ser lido pelo laço for
+void renderizarMapa(char *m, Player *p) { // Struct sendo passado como parâmetro para ser lido pelo laço for
 	for(int i = 0; i < altura; i++) {
 		for(int j = 0; j < largura; j++) {
 			if(i == p->posicaox && j == p->posicaoy) { // Se i e j forem iguais a posição do jogador, imprima 🏃
@@ -160,6 +160,7 @@ int main() {
 			printf("\n");
 			pontuacao(&p); // Informa a pontuação do jogador na parte de cima da tela, acessando o endereço de memória do struct
 			renderizarMapa(mapa, &p);
+			while(getchar() != '\n'); // Limpa o buffer e faz o programa considerar somente o primeiro caractere digitado, evitando que o player ande várias casas de uma vez com um "wwww", por exemplo
 
 			printf("Para onde ir? Digite 'w a s d' e digite ENTER - Digite 0 para SAIR\n");
 			scanf(" %c", &direcao);
