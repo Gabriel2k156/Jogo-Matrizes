@@ -6,7 +6,7 @@
 #define MOEDA '$'
 #define VAZIO '.'
 
-int  altura, largura; // Variáveis de altura e largura do mapa, declaradas de forma global para que sejam lidas pelas funções
+int altura, largura; // Variáveis de altura e largura do mapa, declaradas de forma global para que sejam lidas pelas funções
 
 typedef struct Player { // Struct com nome Player (para ser lido corretamente pela função RenderizarMapa)
 	int vida;
@@ -15,79 +15,93 @@ typedef struct Player { // Struct com nome Player (para ser lido corretamente pe
 	int posicaoy;
 } Player; // Alias da struct, para ser lido corretamente pelas demais funções
 
-void pontuacao(struct Player *p) { // Funcao para exibir a pontuacao atual do jogador durante a partida
-	printf("Pontuação: %d\n", p->pontuacao);
+void pontuacao(struct Player *p) { // Funcao para exibir a pontuacao atual do jogador durante a partida. Adicionado acima das outras funções para que possa ser lido por elas
+	printf("Pontuacao: %d\n", p->pontuacao); // Acessa o valor de pontuação da struct por referência
 }
+
+void gameOver(char *m) { // Padroniza o comportamento de um game over em uma função só
+	printf("---- G A M E  O V E R ----\nVoce foi pego! Reinicie o programa para tentar novamente\n");
+	free(m); // Libera a memória alocada
+	exit(0); // Encerra o programa
+}
+
+void verificarLocal(Player *c, char *m) {
+	if (m[c->posicaox * largura + c->posicaoy] == MOEDA) { // Caso a posição do jogador seja a mesma que a de uma moeda, aumente a pontuação do jogador
+		c->pontuacao++;
+		m[c->posicaox * largura + c->posicaoy] = VAZIO; // Substitui o local que a moeda estava por um espaço em branco
+	}
+}
+
+
 
 void renderizarMapa(char *m, struct Player *p) { // Struct sendo passado como parâmetro para ser lido pelo laço for
 	for(int i = 0; i < altura; i++) {
 		for(int j = 0; j < largura; j++) {
 			if(i == p->posicaox && j == p->posicaoy) { // Se i e j forem iguais a posição do jogador, imprima 🏃
-				printf("🏃\t");
+				printf("🏃   "); // Com três espaçamentos para evitar erro de exibição
 			}
 			else if(m[i * largura + j] == MOEDA) { // Caso encontre um "$" no código, substitui pelo emoji
-				printf("💰\t");
+				printf("💰   ");
 			}
 			else if(m[i * largura + j] == POLICIAL) { // Caso encontre um "2" no código, substitui pelo emoji
-				printf("👮\t");
+				printf("👮   ");
 			}
 			else if(m[i * largura + j] == PAREDE) { // Caso encontre um "1" no código, substitui pelo emoji
-				printf("█\t");
+				printf("█   ");
 			}
-			else if (m[i * largura + j] == VAZIO) {
-				printf(".\t"); // Se o conteúdo da matriz não for vazio E NÃO FOR IGUAL A POSIÇÃO DO JOGADOR, imprima seu conteúdo
+			else{
+				printf(".   "); // Se o conteúdo da matriz não for vazio E NÃO FOR IGUAL A POSIÇÃO DO JOGADOR, imprima seu conteúdo
 			}
 
-			else { // Caso esteja vazio, printe "."
-				printf(".\t");
-			}
+			
 		}
 		printf("\n"); // Quebra de linha para organização
 	}
 }
 
+
 void MoverParaCima(Player *c, char *m) {
-	if(m[(c->posicaox - 1) * largura + c->posicaoy] != PAREDE && m[(c->posicaox - 1) * largura + c->posicaoy] != POLICIAL) { // Caso o novo movimento não seja no mesmo local de uma parede ou policial, mova o jogador
-		c->posicaox--;
-	}
+	if((c->posicaox - 1) >= 0 && m[(c->posicaox - 1) * largura + c->posicaoy] != PAREDE && m[(c->posicaox - 1) * largura + c->posicaoy] != POLICIAL) { // Caso o novo movimento não seja no mesmo local de uma parede ou policial e nem seja menos que zero (acesso indevido de memoria) mova o jogador
+		c->posicaox--; //
+		verificarLocal(c, m);
+}
+
 	else if (m[(c->posicaox - 1) * largura + c->posicaoy] == POLICIAL) { // Caso o novo movimento seja no mesmo local do policial, o jogo é encerrado
-		printf("———G A M E  O V E R ———\nVocê foi pego! Reinicie o programa para tentar novamente\n");
-		free(m); // Libera a memória alocada
-		exit(0); // Encerra o programa
+		gameOver(m);
 	}
 }
 
 void MoverParaBaixo(Player *c,char *m) {
-	if(m[(c->posicaox + 1) * largura + c->posicaoy] != PAREDE && m[(c->posicaox + 1) * largura + c->posicaoy] != POLICIAL) {
+	if((c->posicaox + 1) >= 0 && m[(c->posicaox + 1) * largura + c->posicaoy] != PAREDE && m[(c->posicaox + 1) * largura + c->posicaoy] != POLICIAL) {
 		c->posicaox++;
+		verificarLocal(c, m);
 	}
-	else if (m[(c->posicaox + 1) * largura + c->posicaoy] == POLICIAL) {
-		printf("———G A M E  O V E R ———\nVocê foi pego! Reinicie o programa para tentar novamente\n");
-		free(m);
-		exit(0);
+
+	else if (m[(c->posicaox + 1) * largura + c->posicaoy] == POLICIAL) { // Caso o novo movimento seja no mesmo local do policial, o jogo é encerrado
+		gameOver(m);
 	}
 }
 
 void MoverParaEsquerda(Player *c, char *m) {
-	if(m[c->posicaox * largura + (c->posicaoy - 1)] != PAREDE && m[c->posicaox * largura + (c->posicaoy - 1)] != POLICIAL) {
+	if((c->posicaoy - 1) >= 0 && m[c->posicaox * largura + (c->posicaoy - 1)] != PAREDE && m[c->posicaox * largura + (c->posicaoy - 1)] != POLICIAL) {
 		c->posicaoy--;
+		verificarLocal(c, m);
+	}
+		
+	else if (m[c->posicaox * largura + (c->posicaoy - 1)] == POLICIAL) { // Caso o novo movimento seja no mesmo local do policial, o jogo é encerrado
+		gameOver(m);
 	}
 
-	else if (m[c->posicaox * largura + (c->posicaoy - 1)] == POLICIAL) {
-		printf("———G A M E  O V E R ———\nVocê foi pego! Reinicie o programa para tentar novamente\n");
-		free(m);
-		exit(0);
-	}
 }
 
 void MoverParaDireita(Player *c, char *m) {
-	if(m[(c->posicaox) * largura + c->posicaoy + 1] != PAREDE && m[(c->posicaox) * largura + c->posicaoy + 1] != POLICIAL) {
+	if((c->posicaoy + 1) >= 0 && m[c->posicaox * largura + c->posicaoy + 1] != PAREDE && m[(c->posicaox) * largura + c->posicaoy + 1] != POLICIAL) {
 		c->posicaoy++;
+		verificarLocal(c, m);
 	}
-	else if (m[(c->posicaox) * largura + c->posicaoy + 1] == POLICIAL) {
-		printf("———G A M E  O V E R ———\nVocê foi pego! Reinicie o programa para tentar novamente\n");
-		free(m);
-		exit(0);
+
+	else if (m[c->posicaox * largura + (c->posicaoy + 1)] == POLICIAL) { // Caso o novo movimento seja no mesmo local do policial, o jogo é encerrado
+		gameOver(m);
 	}
 }
 
@@ -131,7 +145,7 @@ int main() {
 	/*👮█💰🏃*/
 
 
-	printf("——— Policia e Ladrão ———\nDigite 1 para jogar ou 0 para sair\n");
+	printf("---- Policia e Ladrao ----\nDigite 1 para jogar ou 0 para sair\n");
 	scanf("%d", &menu);
 
 	switch(menu) {
@@ -143,9 +157,8 @@ int main() {
 
 	case 1:
 		while (1) {
-			system("clear"); // Limpa o terminal
 			printf("\n");
-			pontuacao(&p);
+			pontuacao(&p); // Informa a pontuação do jogador na parte de cima da tela, acessando o endereço de memória do struct
 			renderizarMapa(mapa, &p);
 
 			printf("Para onde ir? Digite 'w a s d' e digite ENTER - Digite 0 para SAIR\n");
@@ -176,7 +189,7 @@ int main() {
 
 		}
 	default: // Caso seja digitado algo além de 1 ou 0 no menu, retorne erro
-		printf("Erro: Digite um valor válido!\n");
+		printf("Erro: Digite um valor valido!\n");
 		free(mapa); // Libera a memória alocada
 		return 1; // Encerra o programa com um erro
 
